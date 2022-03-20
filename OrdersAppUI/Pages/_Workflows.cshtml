@@ -1,0 +1,23 @@
+﻿@model (string workflow, string theme)
+@{
+    Func<string, string> getClass = (string feature) =>
+        feature != null && feature.Equals(Model.workflow) ? "active" : "";
+}
+
+<div class="d-grid">
+    <a class="btn btn-@Model.theme @getClass("Overview") my-1" asp-page="Index">
+        Overview
+    </a>
+    <a class="btn btn-@Model.theme @getClass("SelectProvider") my-1" asp-page="SelectProvider">
+        Providers
+    </a>
+    <a class="btn btn-@Model.theme @getClass("SelectOrder") my-1" asp-page="SelectOrder">
+        Orders
+    </a>
+    <a class="btn btn-@Model.theme @getClass("CreateProvider") my-1" asp-page="CreateProvider">
+        Create Provider
+    </a>
+    <a class="btn btn-@Model.theme @getClass("CreateOrder") my-1" asp-page="CreateOrder">
+        Create Order
+    </a>
+</div>

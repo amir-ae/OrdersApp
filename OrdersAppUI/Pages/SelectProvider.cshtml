@@ -1,0 +1,76 @@
+﻿@page
+@model OrdersAppUI.Pages.SelectProviderModel
+@{
+    ViewBag.Workflow = "SelectProvider";
+    bool modal = TempData["modal"] as bool? ?? HttpContext.Request.Query["task"] == "Create";
+    string? task = TempData["Task"]?.ToString();
+    string? providerId = TempData["id"]?.ToString();
+    TempData["providers"] = JsonSerializer.Serialize(Model.Providers);
+}
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-success">@TempData["message"]</div>
+}
+<input type="hidden" name="modal" value="@modal" />
+<a class="btn btn-primary float-end m-2" asp-page="" asp-route-task="Create">
+    Create
+</a>
+<table class="table table-sm table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Provider</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Providers?.Count() == 0)
+        {
+            <tr><td colspan="2">No matches</td></tr>
+        }
+        else if (Model.Providers?.Count() > 0)
+        {
+            @foreach (ProviderModel p in Model.Providers)
+            {
+                <tr>
+                    <td>@p.Name</td>
+                    <td class="text-center">
+                    <form method="post">
+                        <input type="hidden" name="id" value="@p.Id" />
+                        <button class="btn btn-sm btn-danger" asp-route-task="Delete">
+                            Delete
+                        </button>
+                    </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="providerModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="provider" aria-hidden="true">
+    <vc:provider-editor task=@task id=@providerId />
+</div>
+
+<script src="/lib/jquery/jquery.js"></script>
+<script type="text/javascript">
+    "use strict";
+    if (window.addEventListener) { // Mozilla, Netscape, Firefox
+        window.addEventListener('load', WindowLoad, false);
+    } else if (window.attachEvent) { // IE
+        window.attachEvent('onload', WindowLoad);
+    }
+    const modal = document.querySelector('input[name="modal"]');
+    function WindowLoad(event) {
+        if (modal.value) {
+            $("#providerModal").modal('show');
+        }
+    }
+    $("#providerModal").on("hidden.bs.modal", function () {  
+        $(this)
+            .find("input,textarea,select")
+               .val('')
+               .end()
+            .find("input[type=checkbox], input[type=radio]")
+               .prop("checked", "")
+               .end();
+    });
+</script>

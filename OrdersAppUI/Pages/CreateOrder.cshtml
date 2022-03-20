@@ -1,0 +1,74 @@
+﻿@page
+@model OrdersAppUI.Pages.CreateOrderModel
+@{
+    bool newOrder = string.IsNullOrEmpty(Model.Id);
+    ViewBag.Workflow = newOrder ? "CreateOrder" : "EditOrder";
+}
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-success">@TempData["message"]</div>
+}
+<form method="post" id="order">
+    <div class="form-group my-2">
+        <label asp-for="Order.Number"></label>
+        <div>
+            <span asp-validation-for="Order.Number" class="text-warning"></span>
+        </div>
+        <input asp-for="Order.Number" class="form-control" />
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="Order.Provider"></label>
+        <select asp-for="ProviderId" 
+            asp-items="@(new SelectList(Model?.Providers, nameof(ProviderModel.Id), nameof(ProviderModel.Name), Model?.Order.Provider?.Name))">
+            <option>Please select one</option>
+        </select>
+        <div>
+            <span asp-validation-for="Order.Provider" class="text-warning"></span>
+        </div>
+    </div>
+    <button asp-page-handler="AddItem" class="btn btn-primary">
+        Add Order Item
+    </button>
+    <div>
+        <span asp-validation-for="Order.OrderItems" class="text-warning"></span>
+    </div>
+    @if (Model?.Order.OrderItems?.Any() ?? false) {
+        <fieldset>
+            <legend>Order Items:</legend>
+            <table class="table table-sm table-striped table-bordered">
+                <thead>
+                    <tr><th>Name</th><th>Quantity</th><th>Unit</th><th /></tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model?.Order.OrderItems.Count(); i++)
+                    {
+                        <tr>
+                            <td>@Model?.Order.OrderItems[i].Name</td>
+                            <td>@Model?.Order.OrderItems[i].Quantity</td>
+                            <td>@Model?.Order.OrderItems[i].Unit</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" asp-page-handler="EditItem" asp-route-item=@Model?.Order.OrderItems[i].Serialize() >
+                                    Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" asp-page-handler="RemoveItem" asp-route-item=@Model?.Order.OrderItems[i].Serialize() >
+                                    Remove
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </fieldset>
+    }
+    <input type="hidden" asp-for="Id"/>
+    <input type="hidden" asp-for="OrderItems"/>
+    <div class="mt-3">
+        <button type="submit" form="order" class="btn btn-success">@(newOrder ? "Create" : "Edit")</button>
+        <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+
+
+
+

@@ -1,0 +1,53 @@
+﻿@model ProviderViewModel
+@{
+    string showId = Model?.ShowId ?? false ? string.Empty : "hidden";
+}
+<div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">@($"{Model?.Action} Product")</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form method="post" id="modalForm" class="needs-validation" asp-page-handler="@Model?.Action" novalidate>
+                <div class="form-group my-2" @showId>
+                    <label asp-for="Provider.Id"></label>
+                    <input asp-for="Provider.Id" class="form-control" readonly />
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="Provider.Name"></label>
+                    <input asp-for="Provider.Name" class="form-control" readonly="@Model?.ReadOnly" required />
+                    <div class="invalid-feedback">
+                        The name field is required.
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Model?.CancelLabel</button>
+            @if (Model?.ShowAction ?? false)
+            {
+                <button type="submit" class="btn btn-@Model?.Theme" form="modalForm">@Model?.Action</button>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    (function () {
+      'use strict'
+
+      var forms = document.querySelectorAll('.needs-validation')
+
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })()
+</script>

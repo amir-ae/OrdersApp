@@ -1,0 +1,53 @@
+﻿@{
+    string theme = ViewData["theme"] as string ?? "primary";
+    bool showNav = ViewData["showNav"] as bool? ?? true;
+    string navPartial = ViewData["navPartial"] as string ?? "_Workflows";
+    string? workflow = ViewData["workflow"] as string;
+    string banner = ViewData["banner"] as string ?? "Dashboard";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Order Catalog</title>
+    <link href="/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-light navbar-expand-sm navbar-toggleable-sm border-bottom border-secondary box-shadow">
+            <div class="container">
+                <a class="navbar-brand" href="/">Order Catalog</a>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <h4 class="bg-@theme text-center text-white p-2">@banner</h4>
+    <div class="my-2">
+        <div class="container-fluid">
+            <div class="row">
+                @if (showNav)
+                {
+                    <div class="col-auto">
+                        <partial name="@navPartial" model="@((workflow, theme))" />
+                    </div>
+                }
+                <div class="col">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="border-top border-secondary footer">
+        <div class="container">
+            &copy; @DateTime.Now.Year - Order Catalog
+        </div>
+    </footer>
+    <script src="/lib/twitter-bootstrap/js/bootstrap.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

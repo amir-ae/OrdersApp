@@ -1,0 +1,126 @@
+﻿@page
+@model OrdersAppUI.Pages.SelectOrderModel
+@{
+    ViewBag.Workflow = "SelectOrder";
+    bool modal = TempData["modal"] as bool? ?? HttpContext.Request.Query["task"] == "View";
+    string? task = TempData["Task"]?.ToString();
+    string? orderId = TempData["id"]?.ToString();
+    TempData["orders"] = Model.Orders?.Serialize();
+    TempData["filter"] = Model.Filter?.Serialize();
+}
+@if (TempData.ContainsKey("message"))
+{
+    <div class="alert alert-success">@TempData["message"]</div>
+}
+<form method="post" asp-page-handler="filter" class="my-2">
+    <input type="hidden" name="modal" value="@modal" />
+    <div class="form-group my-2">
+        <label asp-for="Filter.OrderNumber"></label>
+        <input asp-for="Filter.OrderNumber" class="form-control" />
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="Filter.StartDate"></label>
+        <input asp-for="Filter.StartDate" type="date" class="form-control" />
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="Filter.EndDate"></label>
+        <input asp-for="Filter.EndDate" type="date" class="form-control" />
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="Filter.ProviderId"></label>
+        <input asp-for="Filter.ProviderId" class="form-control" />
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="Filter.ProviderName"></label>
+        <input asp-for="Filter.ProviderName" class="form-control" />
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="Filter.OrderItemName"></label>
+        <input asp-for="Filter.OrderItemName" class="form-control" />
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="Filter.OrderItemUnit"></label>
+        <input asp-for="Filter.OrderItemUnit" class="form-control" />
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-secondary m-2 float-end">Filter</button>
+    </div>
+</form>
+@if (Model.AnyFilterValue)
+{
+    <form method="post" asp-page-handler="clear">
+        <button class="btn btn-secondary m-2 float-end">
+            Clear
+        </button>
+    </form>
+}
+<table class="table table-sm table-striped table-bordered my-3">
+    <thead>
+        <tr>
+            <th>Order</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Orders?.Count() == 0)
+        {
+            <tr><td colspan="2">No matches</td></tr>
+        }
+        else if (Model.Orders?.Count() > 0)
+        {
+            @foreach (OrderModel r in Model.Orders)
+            {
+                <tr>
+                    <td>@r.Number</td>
+                    <td class="text-center">
+                        <a asp-page="CreateOrder"
+                            asp-route-id="@r.Id"
+                            class="btn btn-sm btn-secondary">
+                            Edit Order Items
+                        </a>
+                        <form method="post">
+                            <input type="hidden" name="id" value="@r.Id" />
+                            <button class="btn btn-sm btn-info" asp-route-task="View">
+                                View
+                            </button>
+                            <button class="btn btn-sm btn-warning" asp-route-task="Edit">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger" asp-route-task="Delete">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="orderModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="order" aria-hidden="true">
+    <vc:order-editor task=@task id=@orderId />
+</div>
+
+<script src="/lib/jquery/jquery.js"></script>
+<script type="text/javascript">
+    "use strict";
+    if (window.addEventListener) { // Mozilla, Netscape, Firefox
+        window.addEventListener('load', WindowLoad, false);
+    } else if (window.attachEvent) { // IE
+        window.attachEvent('onload', WindowLoad);
+    }
+    const modal = document.querySelector('input[name="modal"]');
+    function WindowLoad(event) {
+        if (modal.value) {
+            $("#orderModal").modal('show');
+        }
+    }
+    $("#orderModal").on("hidden.bs.modal", function () {  
+        $(this)
+            .find("input,textarea,select")
+               .val('')
+               .end()
+            .find("input[type=checkbox], input[type=radio]")
+               .prop("checked", "")
+               .end();
+    });
+</script>

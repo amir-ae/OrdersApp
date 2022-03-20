@@ -1,0 +1,12 @@
+﻿global using System.Web;
+global using System.ComponentModel.DataAnnotations;
+global using System.Text.Json;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.Mvc.RazorPages;
+global using OrdersAppUI;
+global using OrdersAppLibrary.DataAccess;
+global using AutoMapper;
+global using OrdersAppLibrary.Models;
+global using OrdersAppUI.Models;
+global using OrdersAppUI.Models.ViewModels;
+global using OrdersAppUI.Infrastructure;

@@ -1,0 +1,90 @@
+﻿@model OrderViewModel
+@{
+    string showId = Model?.ShowId ?? false ? string.Empty : "hidden";
+}
+<div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">@($"{Model?.Action} Order")</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form method="post" id="modalForm" class="needs-validation" asp-page-handler="@Model?.Action" novalidate>
+                <div class="form-group my-2" @showId>
+                    <label asp-for="Order.Id"></label>
+                    <input asp-for="Order.Id" class="form-control" readonly />
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="Order.Number"></label>
+                    <input asp-for="Order.Number" class="form-control" readonly="@Model?.ReadOnly" required />
+                    <div class="invalid-feedback">
+                        The Number field is required.
+                    </div>
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="Order.Provider"></label>
+                    <select asp-for="ProviderId" disabled="@Model?.ReadOnly"
+                        asp-items="@(new SelectList(Model?.Providers, nameof(ProviderModel.Id), nameof(ProviderModel.Name), Model?.Order.Provider?.Name))">
+                    </select>
+                </div>
+                @if (Model?.ReadOnly ?? false) {
+                    <div class="form-group my-2">
+                        <label asp-for="ProviderId"></label>
+                        <input asp-for="ProviderId" class="form-control" readonly />
+                </div>
+                }
+                <div class="form-group my-2">
+                    <label asp-for="Order.Date"></label>
+                    <input asp-for="Order.Date" class="form-control" type="date" readonly="@Model?.ReadOnly" />
+                </div>
+                <fieldset>
+                    <legend>Order Items:</legend>
+                    <table class="table table-sm table-striped table-bordered">
+                        <thead>
+                            <tr><th>Name</th><th>Quantity</th><th>Unit</th></tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model?.Order.OrderItems.Count(); i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input asp-for="Order.OrderItems[i].Name" disabled="@Model?.ReadOnly" required />
+                                        <div class="invalid-feedback">The Name field is required.</div>
+                                    </td>
+                                    <td><input asp-for="Order.OrderItems[i].Quantity" type="number" min="0" style="max-width:80px;" disabled="@Model?.ReadOnly" /></td>
+                                    <td><input asp-for="Order.OrderItems[i].Unit" style="max-width:80px;" disabled="@Model?.ReadOnly" /></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </fieldset>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Model?.CancelLabel</button>
+            @if (Model?.ShowAction ?? false)
+            {
+                <button type="submit" class="btn btn-@Model?.Theme" form="modalForm">@Model?.Action</button>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    (function () {
+      'use strict'
+
+      var forms = document.querySelectorAll('.needs-validation')
+
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })()
+</script>

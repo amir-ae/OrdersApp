@@ -1,0 +1,12 @@
+﻿@page
+@model OrdersAppUI.Pages.IndexModel
+@{
+    ViewBag.Workflow = "Overview";
+}
+
+<h4 class="bg-success text-white text-center p-2 m-2">Overview</h4>
+<div class="text-center">
+    <h5 class="p-2">
+        The catalog contains @Model?.ProvidersNumber providers and @Model?.OrdersNumber orders.
+    </h5>
+</div>
