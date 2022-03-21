@@ -93,6 +93,7 @@ namespace OrdersAppUI.Pages
         {
             TempData["id"] = Id;
             TempData["order"] = Order.Serialize();
+            TempData.Remove("item");
             return RedirectToPage("AddOrderItem");
         }
 
@@ -106,16 +107,9 @@ namespace OrdersAppUI.Pages
 
         public IActionResult OnPostRemoveItemAsync(string item)
         {
-            OrderItemModel? i = item.Deserialize(new OrderItemModel());
-            if (i is not null) {
-                var orderItem = Order.OrderItems?.Find(
-                    k => k.Name == i.Name 
-                    && k.Quantity == i.Quantity 
-                    && k.Unit == i.Unit);
-
-                if (orderItem is not null) {
-                    Order.OrderItems?.Remove(orderItem);
-                }
+            OrderItemModel? orderItem = item.Deserialize(new OrderItemModel());
+            if (orderItem is not null) {
+                Order.RemoveItem(orderItem);
             }
             TempData["order"] = Order.Serialize();
             return RedirectToPage(new { Id });

@@ -10,9 +10,9 @@ namespace OrdersAppUI.Pages
             string? orderItem = TempData["item"] as string;
 
             if (orderItem is not null) {
-                var i = orderItem.Deserialize(OrderItem);
-                if (i is not null) {
-                    OrderItem = i;
+                var item = orderItem.Deserialize(OrderItem);
+                if (item is not null) {
+                    OrderItem = item;
                     TempData["item"] = OrderItem.Serialize();
                 }
             }
@@ -27,21 +27,12 @@ namespace OrdersAppUI.Pages
                 if (orderData is not null) {
                     order = orderData.Deserialize(order) ?? new();
                 }
-                if (order.OrderItems is null) {
-                    order.OrderItems = new();
-                }
                 string? itemData = TempData["item"] as string;
                 if (itemData is not null) {
-                    var i = itemData.Deserialize(new OrderItemModel()) ?? new();
-                    var item = order.OrderItems?.Find(
-                        k => k.Name == i.Name
-                        && k.Quantity == i.Quantity
-                        && k.Unit == i.Unit);
-                    if (item is not null) {
-                        order.OrderItems?.Remove(item);
-                    }
+                    var item = itemData.Deserialize(new OrderItemModel()) ?? new();
+                    order.RemoveItem(item);
                 }
-                order.OrderItems?.Add(OrderItem);
+                order.AddItem(OrderItem);
                 TempData["order"] = order.Serialize();
                 return RedirectToPage("CreateOrder", new { Id = TempData["id"] as string });
             }
