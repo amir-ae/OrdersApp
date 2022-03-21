@@ -1,6 +1,6 @@
 ﻿namespace OrdersAppUI.Models;
 
-public class FilterModel
+public class Filter
 {
     public string? OrderNumber { get; set; }
 

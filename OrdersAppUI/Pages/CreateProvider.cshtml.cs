@@ -11,10 +11,10 @@ namespace OrdersAppUI.Pages
             _mapper = mapper;
         }
 
-        public ProviderBindingTarget Provider { get; set; } = new ProviderBindingTarget();
+        public Provider Provider { get; set; } = new Provider();
 
         public async Task<IActionResult> OnPostAsync(
-            [FromForm(Name = "Provider")] ProviderBindingTarget target)
+            [FromForm(Name = "Provider")] Provider target)
         {
             if (ModelState.IsValid)
             {

@@ -31,7 +31,7 @@ namespace OrdersAppUI.Pages
         }
 
         public async Task<IActionResult> OnPostCreateAsync(
-            [FromForm(Name = "Provider")]ProviderBindingTarget target)
+            [FromForm(Name = "Provider")]Provider target)
         {
             if (ModelState.IsValid)
             {

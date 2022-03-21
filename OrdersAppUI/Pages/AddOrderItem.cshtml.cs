@@ -2,39 +2,40 @@ namespace OrdersAppUI.Pages
 {
     public class AddOrderItemModel : PageModel
     {
+        [BindProperty(SupportsGet = true)]
+        public string? Order { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string? Item { get; set; }
+
         [BindProperty]
-        public OrderItemModel OrderItem { get; set; } = new();
+        public OrderItem NewItem { get; set; } = new();
 
         public IActionResult OnGetAsync()
         {
-            string? orderItem = TempData["item"] as string;
-
-            if (orderItem is not null) {
-                var item = orderItem.Deserialize(OrderItem);
-                if (item is not null) {
-                    OrderItem = item;
-                    TempData["item"] = OrderItem.Serialize();
+            if (Item is not null) {
+                var orderItem = Item.Deserialize(new OrderItem());
+                if (orderItem is not null) {
+                    NewItem = orderItem;
                 }
             }
+
             return Page();
         }
 
         public IActionResult OnPostAsync()
         {
-            if (ModelState.IsValid) {
-                string? orderData = TempData["order"] as string;
-                OrderBindingTarget order = new();
-                if (orderData is not null) {
-                    order = orderData.Deserialize(order) ?? new();
+            if (ModelState.IsValid && !string.IsNullOrEmpty(Order)) {
+                Order order = Order.Deserialize(new Order()) ?? new();
+
+                if (Item is not null) {
+                    var orderItem = Item.Deserialize(new OrderItem());
+                    if (orderItem is not null) {
+                        order.RemoveItem(orderItem);
+                    }
                 }
-                string? itemData = TempData["item"] as string;
-                if (itemData is not null) {
-                    var item = itemData.Deserialize(new OrderItemModel()) ?? new();
-                    order.RemoveItem(item);
-                }
-                order.AddItem(OrderItem);
-                TempData["order"] = order.Serialize();
-                return RedirectToPage("CreateOrder", new { Id = TempData["id"] as string });
+                order.AddItem(NewItem);
+                return RedirectToPage("CreateOrder", new { order = order.Serialize() });
             }
             return Page();
         }

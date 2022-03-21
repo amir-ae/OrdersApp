@@ -5,24 +5,26 @@
 }
 
 <form method="post">
+    <input type="hidden" asp-for=Order />
+    <input type="hidden" asp-for=Item />
     <div class="form-group my-2">
-        <label asp-for="OrderItem.Name"></label>
+        <label asp-for="NewItem.Name"></label>
         <div>
-            <span asp-validation-for="OrderItem.Name" class="text-warning"></span>
+            <span asp-validation-for="NewItem.Name" class="text-warning"></span>
         </div>
-        <input asp-for="OrderItem.Name" class="form-control" />
+        <input asp-for="NewItem.Name" class="form-control" />
     </div>
     <div class="form-group my-2">
-        <label asp-for="OrderItem.Quantity"></label>
-        <input asp-for="OrderItem.Quantity" type="number" min="0" value="1" class="form-control" />
+        <label asp-for="NewItem.Quantity"></label>
+        <input asp-for="NewItem.Quantity" type="number" min="0" value="1" class="form-control" />
     </div>
     <div class="form-group my-2">
-        <label asp-for="OrderItem.Unit"></label>
-        <input asp-for="OrderItem.Unit" class="form-control" />
+        <label asp-for="NewItem.Unit"></label>
+        <input asp-for="NewItem.Unit" class="form-control" />
     </div>
     <div class="mt-3">
         <button type="submit" class="btn btn-success">Add</button>
-        <a asp-page="CreateOrder" asp-route-id=@(TempData["id"] as string) class="btn btn-secondary">Cancel</a>
+        <a asp-page="CreateOrder" asp-route-order=@Model.Order class="btn btn-secondary">Cancel</a>
     </div>
 </form>
 

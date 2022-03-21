@@ -4,9 +4,13 @@
     {
         public OrdersProfile()
         {
-            CreateMap<OrderBindingTarget, OrderModel>();
+            CreateMap<Order, OrderModel>();
 
-            CreateMap<OrderModel, OrderBindingTarget>();
+            CreateMap<OrderModel, Order>();
+
+            CreateMap<OrderItem, OrderItemModel>();
+
+            CreateMap<OrderItemModel, OrderItem>();
 
             CreateMap<ViewModel<OrderModel>, OrderViewModel>()
                 .ForMember(p => p.Order, op => op.MapFrom(v => v.ModelData ?? new OrderModel()))

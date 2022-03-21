@@ -14,7 +14,7 @@ namespace OrdersAppUI.Pages
         }
 
         [BindProperty]
-        public OrderBindingTarget Order { get; set; } = new();
+        public Order Order { get; set; } = new();
 
         [BindProperty]
         public string ProviderId {
@@ -26,29 +26,24 @@ namespace OrdersAppUI.Pages
         }
 
         [BindProperty]
-        public string OrderItems {
-            get => Order.OrderItems?.SerializeHTML() ?? string.Empty;
-            set => Order.OrderItems = value.DeserializeHTML(Order.OrderItems) ?? new();
+        public string? OrderItems {
+            get => Order.OrderItems?.SerializeHTML();
+            set => Order.OrderItems = value?.DeserializeHTML(Order.OrderItems) ?? new();
         }
 
         public List<ProviderModel> Providers { get; set; } = new();
 
-        [BindProperty(SupportsGet = true)]
-        public string? Id { get; set; }
-
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(string? id, string? order)
         {
-            string? orderData = TempData["order"] as string;
-
-            if (orderData is not null) {
-                Order = orderData.Deserialize(Order) ?? new();
-            }
-            else if (Id is not null) {
-                OrderModel? r = await _orderData.GetOrder(Id);
+            if (id is not null) {
+                OrderModel? r = await _orderData.GetOrder(id);
                 if (r is not null) {
-                    Order = _mapper.Map<OrderBindingTarget>(r);
-                    OrderItems = Order.OrderItems?.SerializeHTML() ?? string.Empty;
+                    Order = _mapper.Map<Order>(r);
+                    OrderItems = Order.OrderItems?.SerializeHTML();
                 }
+            }
+            else if (!string.IsNullOrEmpty(order)) {
+                Order = order.Deserialize(Order) ?? new();
             }
             await GetProviders();
             return Page();
@@ -64,7 +59,7 @@ namespace OrdersAppUI.Pages
             }
             if (ModelState.IsValid) {
                 var order = _mapper.Map<OrderModel>(Order);
-                if (string.IsNullOrEmpty(Id)) {
+                if (string.IsNullOrEmpty(order.Id)) {
                     var result = await _orderData.CreateOrder(order);
                     if (result) {
                         TempData["message"] = "Order Created";
@@ -74,7 +69,6 @@ namespace OrdersAppUI.Pages
                     }
                 }
                 else {
-                    order.Id = Id;
                     var result = await _orderData.UpdateOrder(order);
                     if (result) {
                         TempData["message"] = "Order Updated";
@@ -91,28 +85,21 @@ namespace OrdersAppUI.Pages
 
         public IActionResult OnPostAddItemAsync()
         {
-            TempData["id"] = Id;
-            TempData["order"] = Order.Serialize();
-            TempData.Remove("item");
-            return RedirectToPage("AddOrderItem");
+            return RedirectToPage("AddOrderItem", new { order = Order.Serialize() });
         }
 
         public IActionResult OnPostEditItemAsync(string item)
         {
-            TempData["id"] = Id;
-            TempData["item"] = item;
-            TempData["order"] = Order.Serialize();
-            return RedirectToPage("AddOrderItem");
+            return RedirectToPage("AddOrderItem", new { order = Order.Serialize(), item });
         }
 
         public IActionResult OnPostRemoveItemAsync(string item)
         {
-            OrderItemModel? orderItem = item.Deserialize(new OrderItemModel());
+            OrderItem? orderItem = item.Deserialize(new OrderItem());
             if (orderItem is not null) {
                 Order.RemoveItem(orderItem);
             }
-            TempData["order"] = Order.Serialize();
-            return RedirectToPage(new { Id });
+            return RedirectToPage(new { order = Order.Serialize() });
         }
 
         private async Task GetProviders()

@@ -21,5 +21,3 @@ app.MapRazorPages();
 app.EnsurePopulated();
 
 app.Run();
-
-public partial class Program { }

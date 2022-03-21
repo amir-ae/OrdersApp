@@ -16,7 +16,7 @@ namespace OrdersAppUI.Pages
         public List<ProviderModel> Providers { get; set; } = new();
 
         [BindProperty]
-        public FilterModel Filter { get; set; } = new();
+        public Filter Filter { get; set; } = new();
 
         [BindProperty]
         public bool Clear { get; set; } = false;

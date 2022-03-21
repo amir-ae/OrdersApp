@@ -1,6 +1,6 @@
 ﻿namespace OrdersAppUI.Models;
 
-public class ProviderBindingTarget
+public class Provider
 {
     [Required(ErrorMessage = "The Name field is required")]
     [Display(Name = "Provider name")]

@@ -1,7 +1,7 @@
 ﻿@page
 @model OrdersAppUI.Pages.CreateOrderModel
 @{
-    bool newOrder = string.IsNullOrEmpty(Model.Id);
+    bool newOrder = string.IsNullOrEmpty(Model.Order.Id);
     ViewBag.Workflow = newOrder ? "CreateOrder" : "EditOrder";
 }
 @if (TempData.ContainsKey("message"))
@@ -60,7 +60,7 @@
             </table>
         </fieldset>
     }
-    <input type="hidden" asp-for="Id"/>
+    <input type="hidden" asp-for="Order.Id"/>
     <input type="hidden" asp-for="OrderItems"/>
     <div class="mt-3">
         <button type="submit" form="order" class="btn btn-success">@(newOrder ? "Create" : "Edit")</button>
